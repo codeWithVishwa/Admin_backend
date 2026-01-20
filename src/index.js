@@ -9,7 +9,7 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://admin-dashboard-3vip.onrender.com/",
   credentials: true,
 }));
 
