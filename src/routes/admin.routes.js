@@ -23,7 +23,7 @@ router.post('/logout', (req, res) => {
 	res.clearCookie('admin_token', {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === 'production',
-		sameSite: 'strict',
+		sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
 	});
 	res.json({ success: true, message: 'Admin logged out' });
 });
