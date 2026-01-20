@@ -8,8 +8,19 @@ const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = [
+  process.env.ADMIN_DASHBOARD_ORIGIN,
+  "https://admin-dashboard-3vip.onrender.com",
+  "http://localhost:5173",
+].filter(Boolean);
+
 app.use(cors({
-  origin: "https://admin-dashboard-3vip.onrender.com/",
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    const normalized = origin.endsWith('/') ? origin.slice(0, -1) : origin;
+    const ok = allowedOrigins.some((o) => (o.endsWith('/') ? o.slice(0, -1) : o) === normalized);
+    return cb(ok ? null : new Error('Not allowed by CORS'), ok);
+  },
   credentials: true,
 }));
 
