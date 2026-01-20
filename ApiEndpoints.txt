@@ -1,0 +1,100 @@
+1. POST /api/admin/login
+Purpose: Admin login (sets httpOnly cookie)
+Request Body: { "email": String, "password": String }
+Response:
+Success: { user: { _id, name, email, role } } (cookie admin_token is set)
+Error: { error: String }
+
+2. POST /api/admin/moderator/login
+Purpose: Moderator login
+Request Body: { "email": String, "password": String }
+Response:
+Success: { token, moderator: { _id, name, email, role } }
+Error: { error: String }
+
+3. GET /api/admin/moderator/actions
+Purpose: Admin views all moderator actions
+Auth: Admin only (cookie required)
+Response:
+Success: [{ moderator, action, targetType, targetId, details, ... }]
+
+4. POST /api/admin/moderators
+Purpose: Admin creates a new moderator
+Auth: Admin only
+Request Body: { "name": String, "email": String, "password": String }
+Response:
+Success: { _id, name, email, createdAt }
+Error: { error: String }
+
+5. GET /api/admin/moderators
+Purpose: Admin gets all moderators
+Auth: Admin only
+Response:
+Success: [{ name, email, createdAt }]
+
+6. GET /api/admin/users
+Purpose: List all users
+Auth: Admin or Moderator
+Response:
+Success: [{ name, email, verified, lastIp, lastOnline, status, avatarUrl, createdAt }]
+
+7. POST /api/admin/users/:id/ban
+Purpose: Ban a user
+Auth: Admin only
+Response: { success: true }
+
+8. POST /api/admin/users/:id/suspend
+Purpose: Suspend a user
+Auth: Admin or Moderator
+Response: { success: true }
+
+9. POST /api/admin/users/:id/unban
+Purpose: Unban a user
+Auth: Admin only
+Response: { success: true }
+
+10. GET /api/admin/posts
+Purpose: List all posts
+Auth: Admin or Moderator
+Response:
+Success: [{ ...post fields..., author: { name, email } }]
+
+11. DELETE /api/admin/posts/:id
+Purpose: Delete a post
+Auth: Admin or Moderator
+Response: { success: true }
+
+12. GET /api/admin/reports
+Purpose: List all reports
+Auth: Admin or Moderator
+Response:
+Success: [{ _id, userName, reason, status }]
+
+13. POST /api/admin/reports/:id/resolve
+Purpose: Resolve a report
+Auth: Admin or Moderator
+Response: { success: true }
+
+14. GET /api/admin/audit-logs
+Purpose: List all audit logs (admin only)
+Auth: Admin (requires admin role)
+Response:
+Success: Array of audit log entries, each with:
+actorId: ObjectId of the admin/moderator who performed the action
+role: "admin" or "moderator"
+action: e.g., "ban user", "delete post", "resolve report"
+targetType: "user", "post", or "report"
+targetId: ObjectId of the affected entity
+reason: (optional) Reason for the action
+notes: (optional) Additional notes
+timestamp: Date/time of the action 
+
+15. Audit-logged actions (these endpoints now create audit log entries automatically):
+POST /api/admin/users/:id/ban — Ban a user (logs who did it, what, and why)
+DELETE /api/admin/posts/:id — Delete a post (logs who did it, what, and why)
+POST /api/admin/reports/:id/resolve — Resolve a report (logs who did it, what, and why)
+
+
+
+
+
